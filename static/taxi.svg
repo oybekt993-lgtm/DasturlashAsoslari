@@ -1,23 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Zamonaviy sariq taksi">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Zamonaviy BMW M5 sport avtomobili">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8c7"/><stop offset="1" stop-color="#ffd84d"/></linearGradient>
-    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a9c8ca"/><stop offset="1" stop-color="#1d3a40"/></linearGradient>
-    <filter id="shadow"><feGaussianBlur stdDeviation="14"/></filter>
+    <linearGradient id="paint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#cfd5d8"/><stop offset=".35" stop-color="#8f999d"/><stop offset=".72" stop-color="#4f585b"/><stop offset="1" stop-color="#20272a"/></linearGradient>
+    <linearGradient id="window" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#91aeb7"/><stop offset="1" stop-color="#17272d"/></linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#f7f1d5"/><stop offset="1" stop-color="#dfe1d5"/></linearGradient>
+    <radialGradient id="wheel"><stop stop-color="#9aa7a7"/><stop offset=".18" stop-color="#3e484a"/><stop offset=".7" stop-color="#171a1b"/><stop offset="1" stop-color="#090a0a"/></radialGradient>
+    <filter id="shadow"><feGaussianBlur stdDeviation="13"/></filter>
   </defs>
-  <circle cx="570" cy="110" r="68" fill="#fff" opacity=".78"/><circle cx="535" cy="90" r="45" fill="#fff" opacity=".55"/>
-  <path d="M0 410C150 350 300 380 430 330c130-50 240-28 330 18v172H0z" fill="#dfe6dd"/>
-  <path d="M0 443c200-42 380 20 760-52v129H0z" fill="#cbd3c8"/>
-  <ellipse cx="420" cy="416" rx="270" ry="38" fill="#4d552f" opacity=".22" filter="url(#shadow)"/>
-  <g transform="translate(15 50)">
-    <path d="M155 302c15-72 57-122 119-147l92-36c42-16 111-5 150 23l66 72c40 8 73 32 91 67l20 39H133z" fill="url(#sky)" stroke="#d89e00" stroke-width="8"/>
-    <path d="M258 180l51-38 81-23c35-10 79-3 107 17l50 50z" fill="#fff" stroke="#d89e00" stroke-width="8"/>
-    <path d="M294 176l39-28 55-17c26-8 58-4 80 10l34 35z" fill="url(#glass)"/>
-    <path d="M414 141v57M331 160l-37 29M520 150l31 31" stroke="#fff" stroke-width="7" opacity=".75"/>
-    <rect x="143" y="306" width="557" height="42" rx="21" fill="#f8d21c" stroke="#d89e00" stroke-width="8"/>
-    <rect x="340" y="128" width="106" height="36" rx="8" fill="#fff" stroke="#1b1b1b" stroke-width="7"/><text x="393" y="153" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="800" fill="#1b1b1b">HAMROH</text>
-    <circle cx="270" cy="337" r="66" fill="#20291f"/><circle cx="270" cy="337" r="40" fill="#edf2ee"/><circle cx="270" cy="337" r="15" fill="#87978c"/>
-    <circle cx="610" cy="337" r="66" fill="#20291f"/><circle cx="610" cy="337" r="40" fill="#edf2ee"/><circle cx="610" cy="337" r="15" fill="#87978c"/>
-    <path d="M140 291h58l18-36h-53z" fill="#fff"/><rect x="677" y="286" width="27" height="23" rx="8" fill="#fff0a6"/>
+  <ellipse cx="395" cy="425" rx="305" ry="38" fill="#242a28" opacity=".22" filter="url(#shadow)"/>
+  <path d="M0 410C160 365 330 390 480 350c104-28 202-18 280 22v148H0z" fill="url(#road)"/>
+  <path d="M0 445c220-52 490 15 760-70v145H0z" fill="#d1d4c9" opacity=".8"/>
+  <g transform="translate(5 38)">
+    <!-- Korpus -->
+    <path d="M112 318c18-55 42-92 82-112l125-57c55-25 143-25 202 5l101 73c42 8 75 31 91 67l11 45H93z" fill="url(#paint)" stroke="#252b2d" stroke-width="8"/>
+    <!-- Kapot va sport kontur -->
+    <path d="M510 181l100 67c34 8 58 25 74 53l-142-12z" fill="#687276" opacity=".75"/>
+    <path d="M124 306c155-18 351-29 567-10" fill="none" stroke="#f4f6f5" stroke-width="4" opacity=".8"/>
+    <path d="M112 318l602 21" fill="none" stroke="#1d2324" stroke-width="10"/>
+    <!-- Oyna va ustki liniya -->
+    <path d="M255 206l76-38c39-19 104-20 147-3l91 73-314 1z" fill="url(#window)" stroke="#252b2d" stroke-width="7"/>
+    <path d="M389 169l-4 65M257 207l-1 31M569 238l-85-61" fill="none" stroke="#e4ecec" stroke-width="5" opacity=".55"/>
+    <path d="M291 196l82-34c41-17 93-15 126-2" fill="none" stroke="#eaf1f1" stroke-width="7" opacity=".7"/>
+    <!-- M5 orziga chidamli old gril -->
+    <path d="M650 226l39 34 25 61-73 3-19-79z" fill="#242b2d"/>
+    <path d="M672 239c15 12 23 27 27 47l-30 4z" fill="#080a0b" stroke="#9da7a8" stroke-width="5"/>
+    <path d="M649 273l26 8" stroke="#fff" stroke-width="6"/>
+    <!-- Tanlash chiroqlari -->
+    <path d="M672 227c-18-8-33-7-48 1l22 22 34-5z" fill="#edf7f7" stroke="#1b2324" stroke-width="5"/>
+    <path d="M636 234l18 10" stroke="#fff" stroke-width="4"/><path d="M655 230l16 10" stroke="#80b4c7" stroke-width="3"/>
+    <!-- Eshik va tutqich -->
+    <path d="M371 239v92M520 233l-4 99" fill="none" stroke="#31393b" stroke-width="5"/>
+    <rect x="449" y="266" width="72" height="9" rx="4" fill="#202728"/><rect x="459" y="268" width="52" height="4" rx="2" fill="#d7dddc"/>
+    <!-- Kizil diffuzor -->
+    <path d="M97 309l67 7-12 31H88z" fill="#252b2d"/><rect x="89" y="325" width="52" height="11" rx="5" fill="#bd1c23"/>
+    <!-- G'ildiraklar -->
+    <g><circle cx="250" cy="329" r="82" fill="url(#wheel)"/><circle cx="250" cy="329" r="55" fill="#555f60" stroke="#bfc7c6" stroke-width="5"/><circle cx="250" cy="329" r="18" fill="#8b9696"/><g stroke="#d9dfde" stroke-width="8"><path d="M250 274v110M195 329h110M211 290l78 78M289 290l-78 78"/></g><circle cx="250" cy="329" r="10" fill="#151919"/></g>
+    <g><circle cx="585" cy="329" r="82" fill="url(#wheel)"/><circle cx="585" cy="329" r="55" fill="#555f60" stroke="#bfc7c6" stroke-width="5"/><circle cx="585" cy="329" r="18" fill="#8b9696"/><g stroke="#d9dfde" stroke-width="8"><path d="M585 274v110M530 329h110M546 290l78 78M624 290l-78 78"/></g><circle cx="585" cy="329" r="10" fill="#151919"/></g>
+    <path d="M332 335h171" stroke="#252b2d" stroke-width="18"/>
   </g>
-  <g fill="#fff" opacity=".9"><circle cx="95" cy="112" r="8"/><circle cx="122" cy="88" r="5"/><circle cx="67" cy="76" r="11"/></g>
+  <rect x="414" y="406" width="104" height="26" rx="13" fill="#fff" stroke="#17191c" stroke-width="4"/><text x="466" y="425" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="900" fill="#17191c">M5</text>
 </svg>
