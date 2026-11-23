@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="dashboard">
+  <div class="dashboard-head"><div><p class="eyebrow">Kabinet</p><h1>Yo‘nalishlar</h1></div></div>
+
+  <form class="toolbar panel" action="{{ url_for('dashboard') }}" method="get">
+    <label>Qayerdan<input name="qayerdan" value="{{ request.args.get('qayerdan','') }}"></label>
+    <label>Qayerga<input name="qayerga" value="{{ request.args.get('qayerga','') }}"></label>
+    <label>Sana<input type="date" name="sana" value="{{ request.args.get('sana','') }}"></label>
+    <button class="button primary" type="submit">Qidirish</button>
+  </form>
+
+  <div class="panel table-wrap">
+    {% if trips %}<table class="trips"><thead><tr><th>Yo‘nalish</th><th>Haydovchi</th><th>Vaqt</th><th>Avtomobil</th><th>Joy</th><th>Narx</th><th>Reyting</th>{% if session.role == 'yolovchi' %}<th>Bandlash</th>{% endif %}</tr></thead><tbody>
+      {% for trip in trips %}<tr><td><b>{{ trip.qayerdan }} → {{ trip.qayerga }}</b>{% if trip.faqat_ayol %}<br><span class="badge">Faqat ayollar</span>{% endif %}</td><td>{{ trip.haydovchi }}</td><td>{{ trip.j_nash_vaqti }}</td><td>{{ trip.marka }} {{ trip.model }}</td><td>{{ trip.qolgan_joylar }}</td><td>{{ trip.narx|int }} so‘m</td><td>{{ '%.1f'|format(trip.reyting) }}</td>{% if session.role == 'yolovchi' %}<td><form method="post" action="{{ url_for('book_trip', trip_id=trip.id) }}"><input name="manzil" placeholder="Olib ketish manzili" required><button class="button primary" type="submit">Band qilish</button></form></td>{% endif %}</tr>{% endfor %}
+    </tbody></table>{% else %}<div class="notice">Mos yo‘nalish va sanani kiriting.</div>{% endif %}
+  </div>
+
+  {% if session.role == 'haydovchi' %}
+  <div class="grid-2" style="margin-top:24px">
+    <div class="panel"><h2>Avtomobil qo‘shish</h2><form method="post" action="{{ url_for('add_vehicle') }}" class="compact-form"><label>Marka<input name="marka" required></label><label>Model<input name="model" required></label><label>Davlat raqami<input name="raqam" required></label><label>Rang<input name="rang" required></label><button class="button primary">Qo‘shish</button></form></div>
+    <div class="panel"><h2>Qatnov e’loni</h2>{% if vehicles %}<form method="post" action="{{ url_for('add_trip') }}" class="compact-form"><label>Avtomobil<select name="avtomobil_id">{% for vehicle in vehicles %}<option value="{{ vehicle.id }}">{{ vehicle.marka }} {{ vehicle.model }}</option>{% endfor %}</select></label><label>Qayerdan<input name="qayerdan" required></label><label>Qayerga<input name="qayerga" required></label><label>Vaqt<input name="vaqt" type="datetime-local" required></label><label>Joylar<input name="joylar" type="number" min="1" required></label><label>Narx<input name="narx" type="number" min="0" required></label><label><input type="checkbox" name="faqat_ayol" value="1" style="width:auto"> Faqat ayollar uchun</label><button class="button primary">E’lon chiqarish</button></form>{% else %}<div class="notice">Avval avtomobil qo‘shing.</div>{% endif %}</div>
+  </div>
+  <div class="panel" style="margin-top:24px"><h2>Band qilgan yo‘lovchilar</h2>{% if passenger_list %}<div class="table-wrap"><table class="trips"><thead><tr><th>Yo‘lovchi</th><th>Telefon</th><th>Yo‘nalish</th><th>Vaqt</th><th>Olib ketish manzili</th></tr></thead><tbody>{% for p in passenger_list %}<tr><td>{{ p.ism }}</td><td>{{ p.telefon }}</td><td>{{ p.qayerdan }} → {{ p.qayerga }}</td><td>{{ p.j_nash_vaqti }}</td><td>{{ p.olib_ketish_manzili }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="notice">Hozircha bandlik yo‘q.</div>{% endif %}</div>
+  {% endif %}
+
+  {% if session.role == 'yolovchi' %}
+  <div class="panel" style="margin-top:24px"><h2>Mening bronlarim</h2>{% if my_bookings %}<div class="table-wrap"><table class="trips"><thead><tr><th>Yo‘nalish</th><th>Haydovchi</th><th>Vaqt</th><th>Holat</th><th>Baho / shikoyat</th></tr></thead><tbody>{% for b in my_bookings %}<tr><td>{{ b.qayerdan }} → {{ b.qayerga }}</td><td>{{ b.haydovchi }}</td><td>{{ b.j_nash_vaqti }}</td><td><span class="badge">{{ b.bron_holat }}</span>{% if b.bron_holat == 'band' %}<form method="post" action="{{ url_for('cancel_booking', booking_id=b.id) }}" style="margin-top:8px"><button class="button" type="submit" onclick="return confirm('Bronni bekor qilasizmi?')">Bronni bekor qilish</button></form>{% endif %}</td><td>{% if b.holat == 'yakunlangan' and not b.baholangan %}<form method="post" action="{{ url_for('rate_driver', trip_id=b.trip_id) }}"><select name="ball"><option value="5">5 — A'lo</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1</option></select><input name="izoh" placeholder="Izoh"><button class="button primary">Baholash</button></form>{% elif b.baholangan %}<span class="badge">Baholangan</span>{% else %}Safar tugagach{% endif %}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="notice">Hozircha bron yo‘q.</div>{% endif %}</div>
+  <div class="panel" style="margin-top:24px"><h2>Haydovchiga shikoyat</h2><form method="post" action="{{ url_for('add_complaint') }}" class="compact-form"><label>Qatnov<select name="trip_id">{% for b in my_bookings %}<option value="{{ b.trip_id }}">{{ b.qayerdan }} → {{ b.qayerga }} ({{ b.j_nash_vaqti }})</option>{% endfor %}</select></label><label>Shikoyat matni<textarea name="matn" required></textarea></label><button class="button primary">Shikoyat yuborish</button></form></div>
+  {% endif %}
+
+  {% if session.role == 'dispetcher' %}
+  <div class="panel" style="margin-top:24px"><h2>Barcha qatnovlar</h2><div class="table-wrap"><table class="trips"><thead><tr><th>ID</th><th>Yo‘nalish</th><th>Haydovchi</th><th>Vaqt</th><th>Joy</th><th>Holat</th><th>Blok</th></tr></thead><tbody>{% for t in all_trips %}<tr><td>{{ t.id }}</td><td>{{ t.qayerdan }} → {{ t.qayerga }}</td><td>{{ t.haydovchi }}</td><td>{{ t.j_nash_vaqti }}</td><td>{{ t.qolgan_joylar }}/{{ t.umumiy_joylar }}</td><td><span class="badge">{{ t.holat }}</span></td><td>{{ 'Ha' if t.bloklangan else 'Yo‘q' }}</td></tr>{% endfor %}</tbody></table></div></div>
+  <div class="panel" style="margin-top:24px"><h2>Yangi shikoyatlar</h2>{% if complaints %}{% for c in complaints %}<div style="border-bottom:1px solid var(--line);padding:14px 0"><p><b>{{ c.yolovchi }}</b> → <b>{{ c.haydovchi }}</b></p><p>{{ c.matn }}</p><form method="post" action="{{ url_for('process_complaint', complaint_id=c.id) }}"><label><input type="checkbox" name="bloklash" value="1" style="width:auto"> Haydovchini bloklash</label><button class="button primary">Ko'rib chiqildi</button></form></div>{% endfor %}{% else %}<div class="notice">Yangi shikoyat yo‘q.</div>{% endif %}</div>
+  {% endif %}
+</section>
+{% endblock %}

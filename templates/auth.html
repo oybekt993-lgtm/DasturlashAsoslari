@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-layout"><div class="auth-card">
+  <p class="eyebrow">Tizimga kirish</p><h1>{{ 'Ro‘yxatdan o‘tish' if mode == 'register' else 'Xush kelibsiz' }}</h1>
+  <form method="post">
+    {% if mode == 'register' %}<label>Ism<input name="ism" required></label>{% endif %}
+    <label>Telefon yoki login<input name="telefon" required></label>
+    <label>Parol<input name="parol" type="password" required></label>
+    {% if mode == 'register' %}<div class="field-row"><label>Rol<select name="rol"><option value="yolovchi">Yo‘lovchi</option><option value="haydovchi">Haydovchi</option></select></label><label>Jins<select name="jins"><option value="erkak">Erkak</option><option value="ayol">Ayol</option></select></label></div>{% endif %}
+    <button class="button primary" type="submit">{{ 'Ro‘yxatdan o‘tish' if mode == 'register' else 'Kirish' }}</button>
+  </form>
+</div></section>
+{% endblock %}

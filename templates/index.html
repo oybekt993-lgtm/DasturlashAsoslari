@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy"><p class="eyebrow">Toshkent · viloyatlar</p><h1>Yo‘lingizni birga va qulay bosib o‘ting</h1><p>Haydovchilardan qatnov elonlarini ko‘ring, yo‘lovchilar esa bo‘sh joyni bir necha soniyada band qiladi.</p></div>
+  <div><img class="taxi-visual" src="{{ url_for('static', filename='taxi.svg') }}" alt="Zamonaviy sariq taksi"><form class="search-card" action="{{ url_for('dashboard') }}" method="get"><div class="field-row"><label>Qayerdan<input name="qayerdan" value="{{ request.args.get('qayerdan','Toshkent') }}"></label><label>Qayerga<input name="qayerga" value="{{ request.args.get('qayerga','') }}" placeholder="Samarqand"></label></div><label>Sana<input name="sana" type="date" value="{{ request.args.get('sana','') }}"></label><button class="button primary" type="submit">Qatnovlarni qidirish</button></form></div>
+</section>
+<section class="features"><article><b>01</b><h3>Oson elon</h3><p>Haydovchi avtomobil va yo‘nalishni tezda qo‘shadi.</p></article><article><b>02</b><h3>Xavfsiz bandlash</h3><p>Joylar avtomatik hisoblanadi va bron saqlanadi.</p></article><article><b>03</b><h3>Qulay boshqaruv</h3><p>Bron, qatnov va hisobotlar bir joyda.</p></article></section>
+{% endblock %}

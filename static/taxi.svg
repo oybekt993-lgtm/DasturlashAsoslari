@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Zamonaviy sariq taksi">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff8c7"/><stop offset="1" stop-color="#ffd84d"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#a9c8ca"/><stop offset="1" stop-color="#1d3a40"/></linearGradient>
+    <filter id="shadow"><feGaussianBlur stdDeviation="14"/></filter>
+  </defs>
+  <circle cx="570" cy="110" r="68" fill="#fff" opacity=".78"/><circle cx="535" cy="90" r="45" fill="#fff" opacity=".55"/>
+  <path d="M0 410C150 350 300 380 430 330c130-50 240-28 330 18v172H0z" fill="#dfe6dd"/>
+  <path d="M0 443c200-42 380 20 760-52v129H0z" fill="#cbd3c8"/>
+  <ellipse cx="420" cy="416" rx="270" ry="38" fill="#4d552f" opacity=".22" filter="url(#shadow)"/>
+  <g transform="translate(15 50)">
+    <path d="M155 302c15-72 57-122 119-147l92-36c42-16 111-5 150 23l66 72c40 8 73 32 91 67l20 39H133z" fill="url(#sky)" stroke="#d89e00" stroke-width="8"/>
+    <path d="M258 180l51-38 81-23c35-10 79-3 107 17l50 50z" fill="#fff" stroke="#d89e00" stroke-width="8"/>
+    <path d="M294 176l39-28 55-17c26-8 58-4 80 10l34 35z" fill="url(#glass)"/>
+    <path d="M414 141v57M331 160l-37 29M520 150l31 31" stroke="#fff" stroke-width="7" opacity=".75"/>
+    <rect x="143" y="306" width="557" height="42" rx="21" fill="#f8d21c" stroke="#d89e00" stroke-width="8"/>
+    <rect x="340" y="128" width="106" height="36" rx="8" fill="#fff" stroke="#1b1b1b" stroke-width="7"/><text x="393" y="153" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="800" fill="#1b1b1b">HAMROH</text>
+    <circle cx="270" cy="337" r="66" fill="#20291f"/><circle cx="270" cy="337" r="40" fill="#edf2ee"/><circle cx="270" cy="337" r="15" fill="#87978c"/>
+    <circle cx="610" cy="337" r="66" fill="#20291f"/><circle cx="610" cy="337" r="40" fill="#edf2ee"/><circle cx="610" cy="337" r="15" fill="#87978c"/>
+    <path d="M140 291h58l18-36h-53z" fill="#fff"/><rect x="677" y="286" width="27" height="23" rx="8" fill="#fff0a6"/>
+  </g>
+  <g fill="#fff" opacity=".9"><circle cx="95" cy="112" r="8"/><circle cx="122" cy="88" r="5"/><circle cx="67" cy="76" r="11"/></g>
+</svg>
