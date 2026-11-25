@@ -1,17 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Zamonaviy BMW M5 sport avtomobili">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img" aria-label="Hamroh yozuvli sariq taksi">
   <defs>
-    <linearGradient id="paint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#cfd5d8"/><stop offset=".35" stop-color="#8f999d"/><stop offset=".72" stop-color="#4f585b"/><stop offset="1" stop-color="#20272a"/></linearGradient>
+    <linearGradient id="paint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff18a"/><stop offset=".35" stop-color="#ffd52e"/><stop offset=".72" stop-color="#f2b900"/><stop offset="1" stop-color="#d99500"/></linearGradient>
     <linearGradient id="window" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#91aeb7"/><stop offset="1" stop-color="#17272d"/></linearGradient>
     <linearGradient id="road" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#f7f1d5"/><stop offset="1" stop-color="#dfe1d5"/></linearGradient>
     <radialGradient id="wheel"><stop stop-color="#9aa7a7"/><stop offset=".18" stop-color="#3e484a"/><stop offset=".7" stop-color="#171a1b"/><stop offset="1" stop-color="#090a0a"/></radialGradient>
+    <linearGradient id="bodySide" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff5a8" stop-opacity=".85"/><stop offset=".28" stop-color="#ffdc3c" stop-opacity=".2"/><stop offset=".78" stop-color="#bd7b00" stop-opacity=".42"/><stop offset="1" stop-color="#704500" stop-opacity=".8"/></linearGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset=".45" stop-color="#778487"/><stop offset=".7" stop-color="#f8ffff"/><stop offset="1" stop-color="#4f5b5d"/></linearGradient>
     <filter id="shadow"><feGaussianBlur stdDeviation="13"/></filter>
+    <filter id="carShadow" x="-.2" y="-.2" width="1.4" height="1.5"><feGaussianBlur in="SourceAlpha" stdDeviation="8"/><feOffset dy="12"/><feComponentTransfer><feFuncA type="linear" slope=".35"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   </defs>
   <ellipse cx="395" cy="425" rx="305" ry="38" fill="#242a28" opacity=".22" filter="url(#shadow)"/>
   <path d="M0 410C160 365 330 390 480 350c104-28 202-18 280 22v148H0z" fill="url(#road)"/>
   <path d="M0 445c220-52 490 15 760-70v145H0z" fill="#d1d4c9" opacity=".8"/>
-  <g transform="translate(5 38)">
-    <!-- Korpus -->
+  <g transform="translate(5 38)" filter="url(#carShadow)">
+    <!-- Hamroh taxi body -->
     <path d="M112 318c18-55 42-92 82-112l125-57c55-25 143-25 202 5l101 73c42 8 75 31 91 67l11 45H93z" fill="url(#paint)" stroke="#252b2d" stroke-width="8"/>
+    <path d="M104 310c119-12 304-19 602-5l12 41H93z" fill="url(#bodySide)" opacity=".85"/>
+    <path d="M145 299c126-18 352-31 530-16" fill="none" stroke="#fff9ce" stroke-width="7" stroke-linecap="round" opacity=".8"/>
+    <path d="M143 345c159 16 373 16 552-2" fill="none" stroke="#7d5100" stroke-width="7" opacity=".65"/>
     <!-- Kapot va sport kontur -->
     <path d="M510 181l100 67c34 8 58 25 74 53l-142-12z" fill="#687276" opacity=".75"/>
     <path d="M124 306c155-18 351-29 567-10" fill="none" stroke="#f4f6f5" stroke-width="4" opacity=".8"/>
@@ -20,9 +26,14 @@
     <path d="M255 206l76-38c39-19 104-20 147-3l91 73-314 1z" fill="url(#window)" stroke="#252b2d" stroke-width="7"/>
     <path d="M389 169l-4 65M257 207l-1 31M569 238l-85-61" fill="none" stroke="#e4ecec" stroke-width="5" opacity=".55"/>
     <path d="M291 196l82-34c41-17 93-15 126-2" fill="none" stroke="#eaf1f1" stroke-width="7" opacity=".7"/>
+    <path d="M272 204l76-34c39-17 83-20 120-10" fill="none" stroke="#fff" stroke-width="3" opacity=".7"/>
+    <!-- Taxi sign on the roof -->
+    <path d="M390 139h90l-9-28c-3-9-10-14-20-14h-33c-10 0-17 5-20 14z" fill="#ffd52e" stroke="#252b2d" stroke-width="6"/>
+    <text x="435" y="126" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="900" fill="#17191c">TAXI</text>
     <!-- M5 orziga chidamli old gril -->
-    <path d="M650 226l39 34 25 61-73 3-19-79z" fill="#242b2d"/>
-    <path d="M672 239c15 12 23 27 27 47l-30 4z" fill="#080a0b" stroke="#9da7a8" stroke-width="5"/>
+    <path d="M650 226l39 34 25 61-73 3-19-79z" fill="#242b2d" stroke="#111718" stroke-width="4"/>
+    <path d="M672 239c15 12 23 27 27 47l-30 4z" fill="#080a0b" stroke="url(#chrome)" stroke-width="5"/>
+    <path d="M680 245l14 30" stroke="#758184" stroke-width="3" opacity=".8"/>
     <path d="M649 273l26 8" stroke="#fff" stroke-width="6"/>
     <!-- Tanlash chiroqlari -->
     <path d="M672 227c-18-8-33-7-48 1l22 22 34-5z" fill="#edf7f7" stroke="#1b2324" stroke-width="5"/>
@@ -30,11 +41,13 @@
     <!-- Eshik va tutqich -->
     <path d="M371 239v92M520 233l-4 99" fill="none" stroke="#31393b" stroke-width="5"/>
     <rect x="449" y="266" width="72" height="9" rx="4" fill="#202728"/><rect x="459" y="268" width="52" height="4" rx="2" fill="#d7dddc"/>
+    <rect x="401" y="286" width="103" height="29" rx="7" fill="#fffdf6" opacity=".96"/>
+    <text x="452" y="306" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" font-weight="900" letter-spacing=".5" fill="#17191c">HAMROH</text>
     <!-- Kizil diffuzor -->
     <path d="M97 309l67 7-12 31H88z" fill="#252b2d"/><rect x="89" y="325" width="52" height="11" rx="5" fill="#bd1c23"/>
     <!-- G'ildiraklar -->
-    <g><circle cx="250" cy="329" r="82" fill="url(#wheel)"/><circle cx="250" cy="329" r="55" fill="#555f60" stroke="#bfc7c6" stroke-width="5"/><circle cx="250" cy="329" r="18" fill="#8b9696"/><g stroke="#d9dfde" stroke-width="8"><path d="M250 274v110M195 329h110M211 290l78 78M289 290l-78 78"/></g><circle cx="250" cy="329" r="10" fill="#151919"/></g>
-    <g><circle cx="585" cy="329" r="82" fill="url(#wheel)"/><circle cx="585" cy="329" r="55" fill="#555f60" stroke="#bfc7c6" stroke-width="5"/><circle cx="585" cy="329" r="18" fill="#8b9696"/><g stroke="#d9dfde" stroke-width="8"><path d="M585 274v110M530 329h110M546 290l78 78M624 290l-78 78"/></g><circle cx="585" cy="329" r="10" fill="#151919"/></g>
+    <g><circle cx="250" cy="329" r="82" fill="url(#wheel)" stroke="#080a0a" stroke-width="5"/><circle cx="250" cy="329" r="58" fill="none" stroke="#9fa9a9" stroke-width="3" opacity=".8"/><circle cx="250" cy="329" r="49" fill="#555f60" stroke="url(#chrome)" stroke-width="6"/><circle cx="250" cy="329" r="18" fill="url(#chrome)"/><g stroke="url(#chrome)" stroke-width="8"><path d="M250 280v98M201 329h98M215 294l70 70M285 294l-70 70"/></g><circle cx="250" cy="329" r="10" fill="#151919"/></g>
+    <g><circle cx="585" cy="329" r="82" fill="url(#wheel)" stroke="#080a0a" stroke-width="5"/><circle cx="585" cy="329" r="58" fill="none" stroke="#9fa9a9" stroke-width="3" opacity=".8"/><circle cx="585" cy="329" r="49" fill="#555f60" stroke="url(#chrome)" stroke-width="6"/><circle cx="585" cy="329" r="18" fill="url(#chrome)"/><g stroke="url(#chrome)" stroke-width="8"><path d="M585 280v98M536 329h98M550 294l70 70M620 294l-70 70"/></g><circle cx="585" cy="329" r="10" fill="#151919"/></g>
     <path d="M332 335h171" stroke="#252b2d" stroke-width="18"/>
   </g>
   <rect x="414" y="406" width="104" height="26" rx="13" fill="#fff" stroke="#17191c" stroke-width="4"/><text x="466" y="425" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" font-weight="900" fill="#17191c">M5</text>

@@ -7,6 +7,9 @@
     <label>Qayerdan<input name="qayerdan" value="{{ request.args.get('qayerdan','') }}"></label>
     <label>Qayerga<input name="qayerga" value="{{ request.args.get('qayerga','') }}"></label>
     <label>Sana<input type="date" name="sana" value="{{ request.args.get('sana','') }}"></label>
+    {% if not session.user_id or passenger_is_female %}
+    <label class="checkbox-field"><input type="checkbox" name="faqat_ayol" value="1" {% if request.args.get('faqat_ayol') == '1' %}checked{% endif %}> Faqat ayol yo‘lovchilar uchun</label>
+    {% endif %}
     <button class="button primary" type="submit">Qidirish</button>
   </form>
 
@@ -20,6 +23,34 @@
   <div class="grid-2" style="margin-top:24px">
     <div class="panel"><h2>Avtomobil qo‘shish</h2><form method="post" action="{{ url_for('add_vehicle') }}" class="compact-form"><label>Marka<input name="marka" required></label><label>Model<input name="model" required></label><label>Davlat raqami<input name="raqam" required></label><label>Rang<input name="rang" required></label><button class="button primary">Qo‘shish</button></form></div>
     <div class="panel"><h2>Qatnov e’loni</h2>{% if vehicles %}<form method="post" action="{{ url_for('add_trip') }}" class="compact-form"><label>Avtomobil<select name="avtomobil_id">{% for vehicle in vehicles %}<option value="{{ vehicle.id }}">{{ vehicle.marka }} {{ vehicle.model }}</option>{% endfor %}</select></label><label>Qayerdan<input name="qayerdan" required></label><label>Qayerga<input name="qayerga" required></label><label>Vaqt<input name="vaqt" type="datetime-local" required></label><label>Joylar<input name="joylar" type="number" min="1" required></label><label>Narx<input name="narx" type="number" min="0" required></label><label><input type="checkbox" name="faqat_ayol" value="1" style="width:auto"> Faqat ayollar uchun</label><button class="button primary">E’lon chiqarish</button></form>{% else %}<div class="notice">Avval avtomobil qo‘shing.</div>{% endif %}</div>
+  </div>
+  <div class="grid-2" style="margin-top:24px">
+    <div class="panel">
+      <h2>Doimiy qatnovni shablon saqlash</h2>
+      {% if vehicles %}
+      <form method="post" action="{{ url_for('add_trip_template') }}" class="compact-form">
+        <label>Avtomobil<select name="avtomobil_id" required>{% for vehicle in vehicles %}<option value="{{ vehicle.id }}">{{ vehicle.marka }} {{ vehicle.model }}</option>{% endfor %}</select></label>
+        <label>Qayerdan<input name="qayerdan" required></label>
+        <label>Qayerga<input name="qayerga" required></label>
+        <label>Joylar soni<input name="joylar" type="number" min="1" required></label>
+        <label>Bir joy narxi<input name="narx" type="number" min="0" step="1000" required></label>
+        <label class="checkbox-field"><input type="checkbox" name="faqat_ayol" value="1"> Faqat ayollar uchun</label>
+        <button class="button primary">Shablon saqlash</button>
+      </form>
+      {% else %}<div class="notice">Shablon yaratish uchun avval avtomobil qo‘shing.</div>{% endif %}
+    </div>
+    <div class="panel">
+      <h2>Saqlangan shablonlar</h2>
+      {% if templates %}
+        {% for template in templates %}
+        <form method="post" action="{{ url_for('publish_trip_template', template_id=template.id) }}" class="template-row">
+          <div><b>{{ template.qayerdan }} → {{ template.qayerga }}</b><p>{{ template.marka }} {{ template.model }} · {{ template.umumiy_joylar }} joy · {{ template.narx|int }} so‘m{% if template.faqat_ayol %} · Faqat ayollar{% endif %}</p></div>
+          <label>Jo‘nash sanasi-vaqti<input name="vaqt" type="datetime-local" required></label>
+          <button class="button primary" type="submit">Shablondan e’lon berish</button>
+        </form>
+        {% endfor %}
+      {% else %}<div class="notice">Saqlangan shablonlar hozircha yo‘q.</div>{% endif %}
+    </div>
   </div>
   <div class="panel" style="margin-top:24px"><h2>Band qilgan yo‘lovchilar</h2>{% if passenger_list %}<div class="table-wrap"><table class="trips"><thead><tr><th>Yo‘lovchi</th><th>Telefon</th><th>Yo‘nalish</th><th>Vaqt</th><th>Olib ketish manzili</th></tr></thead><tbody>{% for p in passenger_list %}<tr><td>{{ p.ism }}</td><td>{{ p.telefon }}</td><td>{{ p.qayerdan }} → {{ p.qayerga }}</td><td>{{ p.j_nash_vaqti }}</td><td>{{ p.olib_ketish_manzili }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="notice">Hozircha bandlik yo‘q.</div>{% endif %}</div>
   {% endif %}

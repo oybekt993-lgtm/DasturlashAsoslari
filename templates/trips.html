@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Safarlar — Hamroh{% endblock %}
+{% block content %}
+<section class="dashboard">
+  <div class="dashboard-head">
+    <div><p class="eyebrow">Kelgusi qatnovlar</p><h1>Safarlarni ko‘rish</h1>
+      <p>Qaysi shaharlarga va qaysi aniq sana-vaqtda safar borligini ko‘ring.</p>
+    </div>
+    <span class="badge">{{ trips|length }} ta safar</span>
+  </div>
+
+  <form class="trip-filters panel" action="{{ url_for('trips_page') }}" method="get">
+    <label>Qayerdan<input name="qayerdan" value="{{ filters.qayerdan }}" placeholder="Shahar nomi"></label>
+    <label>Qayerga<input name="qayerga" value="{{ filters.qayerga }}" placeholder="Shahar nomi"></label>
+    <label>Aniq sana<input name="sana" type="date" value="{{ filters.sana }}"></label>
+    <label class="checkbox-field"><input type="checkbox" name="faqat_ayol" value="1" {% if filters.faqat_ayol %}checked{% endif %}> Faqat ayollar uchun</label>
+    <div class="filter-actions">
+      <button class="button primary" type="submit">Safarlarni qidirish</button>
+      <a class="button browse-link" href="{{ url_for('trips_page') }}">Filtrni tozalash</a>
+    </div>
+  </form>
+
+  <div class="panel table-wrap">
+    {% if trips %}
+    <table class="trips">
+      <thead><tr><th>Yo‘nalish</th><th>Aniq sana</th><th>Jo‘nash vaqti</th><th>Haydovchi</th><th>Avtomobil</th><th>Bo‘sh joy</th><th>Narx</th><th>Reyting</th><th></th></tr></thead>
+      <tbody>
+      {% for trip in trips %}
+        <tr>
+          <td><b>{{ trip.qayerdan }} → {{ trip.qayerga }}</b>{% if trip.faqat_ayol %}<br><span class="badge">Faqat ayollar uchun</span>{% endif %}</td>
+          <td>{{ trip.j_nash_vaqti[:10] }}</td>
+          <td>{{ trip.j_nash_vaqti[11:16] }}</td>
+          <td>{{ trip.haydovchi }}</td>
+          <td>{{ trip.marka }} {{ trip.model }}</td>
+          <td>{{ trip.qolgan_joylar }}/{{ trip.umumiy_joylar }}</td>
+          <td>{{ trip.narx|int }} so‘m</td>
+          <td>{{ '%.1f'|format(trip.reyting) }}</td>
+          <td>
+            {% if session.get('role') == 'yolovchi' %}
+              <form method="post" action="{{ url_for('book_trip', trip_id=trip.id) }}" class="book-inline">
+                <input name="manzil" placeholder="Olib ketish manzili" aria-label="Olib ketish manzili" required>
+                <button class="button primary" type="submit">Band qilish</button>
+              </form>
+            {% elif not session.get('user_id') %}
+              <a class="button primary" href="{{ url_for('login') }}">Kirish</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <div class="notice">Tanlangan sana va yo‘nalishda ochiq safar topilmadi. Boshqa shahar yoki sanani tanlang.</div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

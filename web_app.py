@@ -57,17 +57,158 @@ def init_db():
       umumiy_joylar INTEGER NOT NULL, narx REAL NOT NULL,
       faqat_ayol INTEGER NOT NOT NULL DEFAULT 0);
     """.replace("faqat_ayol INTEGER NOT NOT NULL", "faqat_ayol INTEGER NOT NULL"))
+    trip_columns = {
+        row["name"] for row in connection.execute("PRAGMA table_info(trips)")
+    }
+    if "namunaviy" not in trip_columns:
+        connection.execute(
+            "ALTER TABLE trips ADD COLUMN namunaviy INTEGER NOT NULL DEFAULT 0"
+        )
     if connection.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
         connection.execute("INSERT INTO users(ism,telefon,parol,rol,jins) VALUES(?,?,?,?,?)", ("Dispetcher","admin","admin","dispetcher","erkak"))
         connection.execute("INSERT INTO users(ism,telefon,parol,rol,jins) VALUES(?,?,?,?,?)", ("Haydovchi","haydovchi","1234","haydovchi","erkak"))
         connection.execute("INSERT INTO users(ism,telefon,parol,rol,jins) VALUES(?,?,?,?,?)", ("Malika","malika","1234","yolovchi","ayol"))
+    seed_sample_trips(connection)
     connection.commit()
     connection.close()
 
 
+def seed_sample_trips(connection):
+    if connection.execute("SELECT 1 FROM trips LIMIT 1").fetchone():
+        return
+
+    driver = connection.execute(
+        "SELECT id FROM users WHERE telefon='demo-haydovchi'"
+    ).fetchone()
+    if driver is None:
+        driver_id = connection.execute(
+            """INSERT INTO users(ism,telefon,parol,rol,jins)
+               VALUES(?,?,?,?,?)""",
+            ("Namuna haydovchisi", "demo-haydovchi", "1234", "haydovchi", "erkak"),
+        ).lastrowid
+    else:
+        driver_id = driver["id"]
+
+    vehicle = connection.execute(
+        "SELECT id FROM vehicles WHERE haydovchi_id=? LIMIT 1", (driver_id,)
+    ).fetchone()
+    if vehicle is None:
+        vehicle_id = connection.execute(
+            """INSERT INTO vehicles(haydovchi_id,marka,model,davlat_raqami,rang)
+               VALUES(?,?,?,?,?)""",
+            (driver_id, "Chevrolet", "Cobalt", "DEMO-001", "Oq"),
+        ).lastrowid
+    else:
+        vehicle_id = vehicle["id"]
+
+    sample_routes = [
+        ("Chirchiq", 1, 9, 0, 45000),
+        ("Angren", 1, 10, 30, 60000),
+        ("Nurafshon", 2, 9, 30, 35000),
+        ("Yangiyo'l", 2, 11, 0, 30000),
+        ("Chinoz", 3, 8, 30, 40000),
+        ("Olmaliq", 3, 10, 0, 55000),
+        ("Bekobod", 4, 9, 0, 65000),
+        ("Parkent", 4, 10, 30, 50000),
+    ]
+    now = datetime.now()
+    for destination, day_offset, hour, minute, price in sample_routes:
+        departure = (now + timedelta(days=day_offset)).replace(
+            hour=hour, minute=minute, second=0, microsecond=0
+        )
+        if departure <= now:
+            departure += timedelta(days=1)
+        route = connection.execute(
+            "SELECT id FROM routes WHERE qayerdan=? AND qayerga=?",
+            ("Toshkent", destination),
+        ).fetchone()
+        route_id = route["id"] if route else connection.execute(
+            "INSERT INTO routes(qayerdan,qayerga) VALUES(?,?)",
+            ("Toshkent", destination),
+        ).lastrowid
+        connection.execute(
+            """INSERT INTO trips
+               (haydovchi_id,avtomobil_id,yonalish_id,j_nash_vaqti,
+                umumiy_joylar,qolgan_joylar,narx,holat,faqat_ayol,namunaviy)
+               VALUES(?,?,?,?,?,?,?,?,?,1)""",
+            (driver_id, vehicle_id, route_id, departure.isoformat(sep=" "),
+             3, 3, price, "ochiq", 0),
+        )
+
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    connection = db()
+    connection.execute(
+        """UPDATE trips SET holat='yakunlangan'
+           WHERE j_nash_vaqti < ? AND holat NOT IN ('bekor','yakunlangan')""",
+        (datetime.now().isoformat(sep=" "),),
+    )
+    upcoming_routes = connection.execute(
+        """SELECT r.qayerdan,r.qayerga,MIN(t.j_nash_vaqti) birinchi_safar,
+                  COUNT(*) safarlar,MAX(t.namunaviy) namunaviy
+           FROM trips t JOIN routes r ON r.id=t.yonalish_id
+           JOIN users u ON u.id=t.haydovchi_id
+           WHERE t.holat='ochiq' AND t.qolgan_joylar>0
+             AND t.j_nash_vaqti>? AND u.bloklangan=0
+           GROUP BY r.id ORDER BY birinchi_safar LIMIT 8""",
+        (datetime.now().isoformat(sep=" "),),
+    ).fetchall()
+    connection.commit()
+    connection.close()
+    return render_template("index.html", upcoming_routes=upcoming_routes)
+
+
+@app.route("/safarlar")
+def trips_page():
+    connection = db()
+    connection.execute(
+        """UPDATE trips SET holat='yakunlangan'
+           WHERE j_nash_vaqti < ? AND holat NOT IN ('bekor','yakunlangan')""",
+        (datetime.now().isoformat(sep=" "),),
+    )
+    connection.commit()
+
+    filters = {
+        "qayerdan": request.args.get("qayerdan", "").strip(),
+        "qayerga": request.args.get("qayerga", "").strip(),
+        "sana": request.args.get("sana", "").strip(),
+        "faqat_ayol": request.args.get("faqat_ayol") == "1",
+    }
+    where = [
+        "t.holat='ochiq'",
+        "t.qolgan_joylar>0",
+        "u.bloklangan=0",
+        "t.j_nash_vaqti>?",
+    ]
+    params = [datetime.now().isoformat(sep=" ")]
+    if filters["qayerdan"]:
+        where.append("r.qayerdan LIKE ?")
+        params.append(f"%{filters['qayerdan']}%")
+    if filters["qayerga"]:
+        where.append("r.qayerga LIKE ?")
+        params.append(f"%{filters['qayerga']}%")
+    if filters["sana"]:
+        where.append("substr(t.j_nash_vaqti,1,10)=?")
+        params.append(filters["sana"])
+    if filters["faqat_ayol"]:
+        where.append("t.faqat_ayol=1")
+
+    trips = connection.execute(
+        f"""SELECT t.id,t.j_nash_vaqti,t.qolgan_joylar,t.umumiy_joylar,t.narx,
+                   t.faqat_ayol,t.namunaviy,r.qayerdan,r.qayerga,u.ism haydovchi,
+                   v.marka,v.model,
+                   (SELECT COALESCE(AVG(ra.ball),0) FROM ratings ra
+                    WHERE ra.haydovchi_id=t.haydovchi_id) reyting
+            FROM trips t JOIN routes r ON r.id=t.yonalish_id
+            JOIN users u ON u.id=t.haydovchi_id
+            JOIN vehicles v ON v.id=t.avtomobil_id
+            WHERE {" AND ".join(where)}
+            ORDER BY t.j_nash_vaqti LIMIT 200""",
+        params,
+    ).fetchall()
+    connection.close()
+    return render_template("trips.html", trips=trips, filters=filters)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -116,13 +257,28 @@ def dashboard():
         qayerdan = request.args.get("qayerdan", "")
         qayerga = request.args.get("qayerga", "")
         sana = request.args.get("sana", "")
-        trips = search_trips(connection, qayerdan, qayerga, sana)
+        trips = search_trips(
+            connection, qayerdan, qayerga, sana,
+            request.args.get("faqat_ayol") == "1",
+        )
         connection.close()
         return render_template("dashboard.html", trips=trips, vehicles=[], my_bookings=[])
 
     role = session["role"]
     user_id = session["user_id"]
+    passenger_is_female = False
+    if role == "yolovchi":
+        passenger = connection.execute(
+            "SELECT jins FROM users WHERE id=?", (user_id,)
+        ).fetchone()
+        passenger_is_female = bool(passenger and passenger["jins"] == "ayol")
     vehicles = connection.execute("SELECT * FROM vehicles WHERE haydovchi_id=?", (user_id,)).fetchall() if role == "haydovchi" else []
+    templates = connection.execute("""
+      SELECT tt.*,r.qayerdan,r.qayerga,v.marka,v.model
+      FROM trip_templates tt JOIN routes r ON r.id=tt.yonalish_id
+      JOIN vehicles v ON v.id=tt.avtomobil_id
+      WHERE tt.haydovchi_id=? ORDER BY tt.id DESC
+    """, (user_id,)).fetchall() if role == "haydovchi" else []
     passenger_list = connection.execute("""
       SELECT b.*,u.ism,u.telefon,t.j_nash_vaqti,r.qayerdan,r.qayerga
       FROM bookings b JOIN users u ON u.id=b.yolovchi_id JOIN trips t ON t.id=b.qatnov_id
@@ -143,13 +299,17 @@ def dashboard():
       SELECT t.*,r.qayerdan,r.qayerga,u.ism haydovchi,u.bloklangan,v.marka,v.model
       FROM trips t JOIN routes r ON r.id=t.yonalish_id JOIN users u ON u.id=t.haydovchi_id
       JOIN vehicles v ON v.id=t.avtomobil_id ORDER BY t.j_nash_vaqti DESC""").fetchall() if role == "dispetcher" else []
-    trips = search_trips(connection, request.args.get("qayerdan", ""), request.args.get("qayerga", ""), request.args.get("sana", ""))
+    trips = search_trips(
+        connection, request.args.get("qayerdan", ""), request.args.get("qayerga", ""),
+        request.args.get("sana", ""), request.args.get("faqat_ayol") == "1",
+    )
     connection.close()
     return render_template("dashboard.html", trips=trips, vehicles=vehicles, passenger_list=passenger_list,
-                           my_bookings=my_bookings, complaints=complaints, all_trips=all_trips)
+                           my_bookings=my_bookings, complaints=complaints, all_trips=all_trips,
+                           templates=templates, passenger_is_female=passenger_is_female)
 
 
-def search_trips(connection, from_place, to_place, date):
+def search_trips(connection, from_place, to_place, date, women_only=False):
     if not from_place or not to_place:
         return []
     where = ["t.holat='ochiq'", "t.qolgan_joylar>0", "u.bloklangan=0"]
@@ -162,6 +322,8 @@ def search_trips(connection, from_place, to_place, date):
     if date:
         where.append("substr(t.j_nash_vaqti,1,10)=?")
         params.append(date)
+    if women_only:
+        where.append("t.faqat_ayol=1")
     where.append("t.j_nash_vaqti > ?")
     params.append(datetime.now().isoformat(sep=" "))
     sql += " AND " + " AND ".join(where) + " ORDER BY t.j_nash_vaqti"
@@ -199,6 +361,87 @@ def add_trip():
         connection.execute("INSERT INTO trips(haydovchi_id,avtomobil_id,yonalish_id,j_nash_vaqti,umumiy_joylar,qolgan_joylar,narx,faqat_ayol) VALUES(?,?,?,?,?,?,?,?)", (session["user_id"], vehicle["id"], route_id, request.form["vaqt"].replace("T"," "), seats, seats, price, women))
         connection.commit(); flash("Qatnov e'loni chiqarildi", "success")
     connection.close()
+    return redirect(url_for("dashboard"))
+
+
+@app.post("/template/add")
+def add_trip_template():
+    if session.get("role") != "haydovchi":
+        return redirect(url_for("login"))
+
+    connection = db()
+    try:
+        vehicle = connection.execute(
+            "SELECT id FROM vehicles WHERE id=? AND haydovchi_id=?",
+            (request.form["avtomobil_id"], session["user_id"]),
+        ).fetchone()
+        from_place = request.form["qayerdan"].strip()
+        to_place = request.form["qayerga"].strip()
+        seats = int(request.form["joylar"])
+        price = float(request.form["narx"])
+        if not vehicle or not from_place or not to_place or seats < 1 or price < 0:
+            flash("Shablon ma'lumotlarini tekshiring", "error")
+        else:
+            route = connection.execute(
+                "SELECT id FROM routes WHERE qayerdan=? AND qayerga=?",
+                (from_place, to_place),
+            ).fetchone()
+            route_id = route["id"] if route else connection.execute(
+                "INSERT INTO routes(qayerdan,qayerga) VALUES(?,?)",
+                (from_place, to_place),
+            ).lastrowid
+            connection.execute(
+                """INSERT INTO trip_templates
+                   (haydovchi_id,yonalish_id,avtomobil_id,umumiy_joylar,narx,faqat_ayol)
+                   VALUES(?,?,?,?,?,?)""",
+                (session["user_id"], route_id, vehicle["id"], seats, price,
+                 1 if request.form.get("faqat_ayol") else 0),
+            )
+            connection.commit()
+            flash("Doimiy qatnov shablon sifatida saqlandi", "success")
+    except (KeyError, TypeError, ValueError):
+        connection.rollback()
+        flash("Joylar soni va narxni to'g'ri kiriting", "error")
+    finally:
+        connection.close()
+    return redirect(url_for("dashboard"))
+
+
+@app.post("/template/<int:template_id>/publish")
+def publish_trip_template(template_id):
+    if session.get("role") != "haydovchi":
+        return redirect(url_for("login"))
+
+    connection = db()
+    template = connection.execute(
+        """SELECT * FROM trip_templates
+           WHERE id=? AND haydovchi_id=?""",
+        (template_id, session["user_id"]),
+    ).fetchone()
+    try:
+        departure = datetime.strptime(request.form["vaqt"], "%Y-%m-%dT%H:%M")
+        if departure <= datetime.now():
+            flash("Jo'nash vaqti kelajakda bo'lishi kerak", "error")
+        elif not template:
+            flash("Shablon topilmadi", "error")
+        else:
+            seats = template["umumiy_joylar"]
+            connection.execute(
+                """INSERT INTO trips
+                   (haydovchi_id,avtomobil_id,yonalish_id,j_nash_vaqti,
+                    umumiy_joylar,qolgan_joylar,narx,faqat_ayol)
+                   VALUES(?,?,?,?,?,?,?,?)""",
+                (session["user_id"], template["avtomobil_id"], template["yonalish_id"],
+                 departure.isoformat(sep=" "), seats, seats, template["narx"],
+                 template["faqat_ayol"]),
+            )
+            connection.commit()
+            flash("Shablondan qatnov e'loni chiqarildi", "success")
+    except (KeyError, TypeError, ValueError):
+        connection.rollback()
+        flash("Jo'nash sanasi va vaqtini to'g'ri kiriting", "error")
+    finally:
+        connection.close()
     return redirect(url_for("dashboard"))
 
 

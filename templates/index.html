@@ -2,7 +2,32 @@
 {% block content %}
 <section class="hero">
   <div class="hero-copy"><p class="eyebrow">Toshkent · viloyatlar</p><h1>Yo‘lingizni birga va qulay bosib o‘ting</h1><p>Haydovchilardan qatnov elonlarini ko‘ring, yo‘lovchilar esa bo‘sh joyni bir necha soniyada band qiladi.</p></div>
-  <div><img class="taxi-visual" src="{{ url_for('static', filename='taxi.svg') }}" alt="Zamonaviy BMW M5 sport avtomobili"><form class="search-card" action="{{ url_for('dashboard') }}" method="get"><div class="field-row"><label>Qayerdan<input name="qayerdan" value="{{ request.args.get('qayerdan','Toshkent') }}"></label><label>Qayerga<input name="qayerga" value="{{ request.args.get('qayerga','') }}" placeholder="Samarqand"></label></div><label>Sana<input name="sana" type="date" value="{{ request.args.get('sana','') }}"></label><button class="button primary" type="submit">Qatnovlarni qidirish</button></form></div>
+  <div><img class="taxi-visual" src="{{ url_for('static', filename='taxi.svg') }}" alt="Hamroh yozuvli sariq taksi"><form class="search-card" action="{{ url_for('dashboard') }}" method="get"><div class="field-row"><label>Qayerdan<input name="qayerdan" value="{{ request.args.get('qayerdan','Toshkent') }}"></label><label>Qayerga<input name="qayerga" value="{{ request.args.get('qayerga','') }}" placeholder="Samarqand"></label></div><label>Sana<input name="sana" type="date" value="{{ request.args.get('sana','') }}"></label><button class="button primary" type="submit">Qatnovlarni qidirish</button><a class="button browse-link" href="{{ url_for('trips_page') }}">Barcha safarlarni ko‘rish</a></form></div>
+</section>
+<section class="available-routes">
+  <div class="section-heading">
+    <div><p class="eyebrow">Yo‘nalish va jadval</p><h2>Qaysi shaharlarga safar bor?</h2>
+      <p>Har bir yo‘nalish uchun eng yaqin qatnovning aniq sanasi va jo‘nash vaqti ko‘rsatilgan.</p>
+    </div>
+    <a class="button browse-link" href="{{ url_for('trips_page') }}">Barcha safarlar</a>
+  </div>
+  {% if upcoming_routes %}
+    <div class="route-cards">
+      {% for route in upcoming_routes %}
+      <a class="route-card" href="{{ url_for('trips_page', qayerdan=route.qayerdan, qayerga=route.qayerga) }}">
+        <span class="route-tag">{{ route.safarlar }} ta qatnov</span>
+        <strong>{{ route.qayerdan }} <span>→</span> {{ route.qayerga }}</strong>
+        <span class="route-date">{{ route.birinchi_safar[:10] }} · {{ route.birinchi_safar[11:16] }}</span>
+        {% if route.namunaviy %}<span class="sample-tag">Namuna jadvali</span>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% if upcoming_routes|selectattr('namunaviy')|list %}
+    <p class="sample-note">“Namuna jadvali” deb belgilangan qatnovlar ilovani ko‘rsatish uchun kiritilgan sinov ma’lumotlari. Haydovchilar o‘z e’lonlarini joylagach, ular ham shu ro‘yxatda chiqadi.</p>
+    {% endif %}
+  {% else %}
+    <div class="empty-routes"><b>Hozircha yangi safar e’lon qilinmagan</b><span>Haydovchi qatnov joylaganidan keyin shahar, sana va vaqt bu yerda ko‘rinadi.</span><a class="button primary" href="{{ url_for('trips_page') }}">Safarlar sahifasini ochish</a></div>
+  {% endif %}
 </section>
 <section class="features"><article><b>01</b><h3>Oson elon</h3><p>Haydovchi avtomobil va yo‘nalishni tezda qo‘shadi.</p></article><article><b>02</b><h3>Xavfsiz bandlash</h3><p>Joylar avtomatik hisoblanadi va bron saqlanadi.</p></article><article><b>03</b><h3>Qulay boshqaruv</h3><p>Bron, qatnov va hisobotlar bir joyda.</p></article></section>
 {% endblock %}

@@ -9,6 +9,7 @@
 <body>
   <nav class="nav">
     <a class="brand" href="{{ url_for('index') }}"><span>H</span> Hamroh</a>
+    <a class="nav-trips" href="{{ url_for('trips_page') }}">Safarlarni ko‘rish</a>
     {% if session.user_id %}
       <div class="nav-actions"><span>{{ session.user_name }} · {{ session.role }}</span><a href="{{ url_for('dashboard') }}">Kabinet</a><a href="{{ url_for('logout') }}">Chiqish</a></div>
     {% else %}
